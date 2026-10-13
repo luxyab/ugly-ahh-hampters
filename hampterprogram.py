@@ -42,7 +42,7 @@ while True:
 
     mirror_frame = cv2.flip(frame,1)
 
-    rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB) # mediapipe uses rgb, opencv gives us bgr so converting to rgb
+    rgb_frame = cv2.cvtColor(mirror_frame, cv2.COLOR_BGR2RGB) # mediapipe uses rgb, opencv gives us bgr so converting to rgb
 
     mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=rgb_frame)  #basically opencv image format to mp format
 
@@ -55,28 +55,28 @@ while True:
         blendshapes = {b.category_name : b.score for b in result.face_blendshapes[0] } #dictionary checking all the elements in mediapipe library one by one and assigning a score to them
 
 
-    smile_score = blendshapes.get("mouthSmileLeft",0)
-    jaw_open_score = blendshapes.get("jawOpen",0)  #get this particular blendshape from the library
-    left_eye_squint = blendshapes.get("eyeSquintLeft",0) 
-    right_eye_squint = blendshapes.get("eyeSquintRight",0)
-    squint_score= (left_eye_squint + right_eye_squint)/2
-    brow_down_right= blendshapes.get("browDownRight",0)
-    brow_down_left = blendshapes.get("browDownLeft",0)
+        smile_score = blendshapes.get("mouthSmileLeft",0)
+        jaw_open_score = blendshapes.get("jawOpen",0)  #get this particular blendshape from the library
+        left_eye_squint = blendshapes.get("eyeSquintLeft",0) 
+        right_eye_squint = blendshapes.get("eyeSquintRight",0)
+        squint_score= (left_eye_squint + right_eye_squint)/2
+        brow_down_right= blendshapes.get("browDownRight",0)
+        brow_down_left = blendshapes.get("browDownLeft",0)
 
 
 
-    if smile_score > 0.5:
-        current_state = "smiling"
-    elif jaw_open_score >0.5:
-         current_state = "huge_smile"   
-    elif squint_score >0.5    :
-        current_state = "squint"
-    elif brow_down_right > 0.5:
-        current_state = "the_rock_right"   
-    elif brow_down_left > 0.5 :
-        current_state = "the_rock_left"
-    else:
-        current_state="neutral"
+        if smile_score > 0.5 and jaw_open_score >0.5:
+            current_state = "huge_smile"
+        elif smile_score > 0.5:
+            current_state = "smiling"
+        elif squint_score >0.5    :
+            current_state = "squint"
+        elif brow_down_right > 0.5:
+            current_state = "the_rock_right"   
+        elif brow_down_left > 0.5 :
+            current_state = "the_rock_left"
+        else:
+            current_state="neutral"
 
     cv2.imshow("Webcam", mirror_frame)    
 
@@ -89,7 +89,5 @@ while True:
         break
 
 
-cap.release
-cv2.destroyAllWindows
-
-
+cap.release()
+cv2.destroyAllWindows()
